@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OrtoEndo — Gestión Dental</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e7eaf0;
+  --primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--amber:#d97706;--red:#dc2626;
+  --sidebar:#111827;--sidebarText:#d1d5db;--shadow:0 8px 30px rgba(17,24,39,.06);--radius:16px
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh}.sidebar{width:250px;background:var(--sidebar);color:#fff;padding:22px 14px;position:fixed;inset:0 auto 0 0}
+.brand{font-size:21px;font-weight:800;padding:8px 12px 24px}.brand span{color:#60a5fa}
+.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:var(--sidebarText);text-align:left;padding:11px 12px;border-radius:10px;display:flex;gap:11px;align-items:center}
+.nav button.active,.nav button:hover{background:#1f2937;color:#fff}.nav .sep{height:1px;background:#374151;margin:12px}
+.sidebar-foot{position:absolute;bottom:18px;left:14px;right:14px;color:#9ca3af;font-size:12px;padding:12px}
+.main{margin-left:250px;width:calc(100% - 250px)}.topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:10}
+.role{font-size:13px;color:var(--muted)}.role strong{color:var(--text)}.top-actions{display:flex;gap:10px;align-items:center}
+.avatar{width:34px;height:34px;border-radius:50%;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center;font-weight:700}
+.content{padding:26px;max-width:1500px;margin:auto}.view{display:none}.view.active{display:block}
+h1{font-size:26px;margin:0 0 6px}h2{font-size:18px;margin:0 0 16px}.sub{color:var(--muted);font-size:14px}.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}.metric{display:flex;justify-content:space-between;align-items:flex-start}.metric .n{font-size:28px;font-weight:800;margin-top:8px}.metric .delta{font-size:12px;color:var(--green);background:#ecfdf3;padding:5px 8px;border-radius:999px}
+.iconbox{width:38px;height:38px;border-radius:10px;background:#eff6ff;color:var(--primary);display:grid;place-items:center}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.stack{display:grid;gap:12px}.mt{margin-top:18px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--text);padding:9px 13px;border-radius:10px;font-weight:650}.btn:hover{background:#f8fafc}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary2)}.btn.ghost{border-color:transparent;background:transparent}.btn.danger{color:var(--red)}
+.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700}.b-blue{background:#dbeafe;color:#1d4ed8}.b-green{background:#dcfce7;color:#15803d}.b-amber{background:#fef3c7;color:#a16207}.b-red{background:#fee2e2;color:#b91c1c}.b-gray{background:#f3f4f6;color:#4b5563}
+.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.table th{color:var(--muted);font-weight:650}.table tr:last-child td{border-bottom:0}.clickable tbody tr:hover{background:#f8fafc;cursor:pointer}
+.search{display:flex;gap:8px}.search input,.field input,.field select,.field textarea{width:100%;border:1px solid #dfe3ea;border-radius:10px;padding:10px 11px;background:#fff;outline:none}.search input:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:#93c5fd;box-shadow:0 0 0 3px #dbeafe}.field label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.formgrid .full{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:18px}.tabs button{border:0;background:none;padding:10px 12px;color:var(--muted);border-bottom:2px solid transparent}.tabs button.active{color:var(--primary);border-color:var(--primary);font-weight:700}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}.dayhead{padding:10px;background:#f8fafc;font-size:12px;color:var(--muted);border-right:1px solid var(--line)}.day{min-height:145px;border-top:1px solid var(--line);border-right:1px solid var(--line);padding:8px}.day:nth-child(7n){border-right:0}.num{font-size:12px;color:var(--muted);margin-bottom:6px}.appt{font-size:11px;padding:7px;border-radius:8px;margin:5px 0;background:#eff6ff;border-left:3px solid #3b82f6}.appt.green{background:#ecfdf5;border-color:#22c55e}.appt.amber{background:#fffbeb;border-color:#f59e0b}
+.timeline{position:relative;margin-left:8px;padding-left:24px;border-left:2px solid #e5e7eb}.event{position:relative;margin-bottom:18px}.event:before{content:"";position:absolute;left:-31px;top:3px;width:10px;height:10px;border-radius:50%;background:#3b82f6;border:3px solid #dbeafe}.event .date{font-size:11px;color:var(--muted)}.event strong{display:block;margin:3px 0}.event p{margin:0;color:#4b5563;font-size:13px}
+.toothmap{display:grid;grid-template-columns:repeat(16,1fr);gap:6px}.tooth{height:42px;border:1px solid #d1d5db;border-radius:8px;background:#fff;display:grid;place-items:center;font-size:11px;position:relative}.tooth.done{background:#dcfce7;border-color:#86efac}.tooth.treat{background:#dbeafe;border-color:#93c5fd}.tooth.pending{background:#fff7ed;border-color:#fdba74}.legend{display:flex;gap:12px;font-size:11px;color:var(--muted);margin-top:10px}.dot{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:4px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:30}.modal.show{display:flex}.modalbox{background:#fff;width:min(720px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:20px;box-shadow:0 25px 70px rgba(0,0,0,.2)}
+.toast{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:50;font-size:13px}.toast.show{display:block}
+@media(max-width:1000px){.sidebar{width:76px}.brand{font-size:0}.brand span{font-size:21px}.nav button span:last-child,.sidebar-foot{display:none}.main{margin-left:76px;width:calc(100% - 76px)}.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}.toothmap{grid-template-columns:repeat(8,1fr)}}
+@media(max-width:700px){.topbar{padding:0 14px}.content{padding:16px}.g4,.g3,.g2,.formgrid{grid-template-columns:1fr}.calendar{grid-template-columns:1fr}.dayhead{display:none}.day{min-height:100px}.toothmap{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">Orto<span>Endo</span></div>
+  <nav class="nav">
+    <button class="active" data-view="dashboard">▦ <span>Inicio</span></button>
+    <button data-view="patients">👥 <span>Pacientes</span></button>
+    <button data-view="agenda">🗓 <span>Agenda</span></button>
+    <button data-view="clinical">🦷 <span>Clínico</span></button>
+    <button data-view="finance">💳 <span>Finanzas</span></button>
+    <button data-view="reports">▥ <span>Reportes</span></button>
+    <div class="sep"></div>
+    <button data-view="settings">⚙ <span>Configuración</span></button>
+  </nav>
+  <div class="sidebar-foot">Demo funcional · datos locales<br>Preparada para 3 roles</div>
+</aside>
+<main class="main">
+<header class="topbar">
+  <div><div class="role">Clínica Dental <strong>Sonrisa Norte</strong></div><div class="sub" id="today"></div></div>
+  <div class="top-actions">
+    <select id="roleSelect" class="btn" style="padding:8px 10px">
+      <option value="secretaria">Secretaria</option><option value="residente">Residente</option><option value="admin">Dentista titular</option>
+    </select>
+    <button class="btn">🔔 <span id="notifCount">3</span></button><div class="avatar">GS</div>
+  </div>
+</header>
+<section class="content">
+
+<div id="dashboard" class="view active">
+  <div class="row"><div><h1>Buenos días 👋</h1><div class="sub">Resumen operativo de la clínica.</div></div><div class="actions"><button class="btn" onclick="openModal('newPatient')">+ Paciente</button><button class="btn primary" onclick="openModal('newAppointment')">+ Agendar cita</button></div></div>
+  <div class="grid g4 mt">
+    <div class="card metric"><div><div class="sub">Citas hoy</div><div class="n">12</div></div><div class="iconbox">🗓</div></div>
+    <div class="card metric"><div><div class="sub">Pacientes activos</div><div class="n">148</div></div><div class="iconbox">👥</div></div>
+    <div class="card metric"><div><div class="sub">Cobrado hoy</div><div class="n">$184.500</div><div class="delta">+12% vs ayer</div></div><div class="iconbox">💳</div></div>
+    <div class="card metric"><div><div class="sub">Por validar</div><div class="n">3</div></div><div class="iconbox">✓</div></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card"><div class="row"><h2>Agenda de hoy</h2><button class="btn ghost" onclick="showView('agenda')">Ver agenda →</button></div>
+      <table class="table"><tbody>
+      <tr><td><b>09:00</b></td><td>Lucía Fernández</td><td><span class="badge b-blue">Ortodoncia</span></td><td>Dr. García</td></tr>
+      <tr><td><b>10:00</b></td><td>Martín López</td><td><span class="badge b-amber">Endodoncia</span></td><td>Residente</td></tr>
+      <tr><td><b>11:30</b></td><td>Sofía Ruiz</td><td><span class="badge b-blue">Ortodoncia</span></td><td>Dr. García</td></tr>
+      <tr><td><b>12:15</b></td><td>Pedro Silva</td><td><span class="badge b-green">Control</span></td><td>Residente</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card"><div class="row"><h2>Acciones pendientes</h2></div>
+      <div class="stack">
+        <div class="row"><div><b>3 notas del residente</b><div class="sub">Requieren firma del titular</div></div><button class="btn primary" onclick="showView('clinical')">Revisar</button></div>
+        <div class="row"><div><b>4 pagos pendientes</b><div class="sub">Vencidos o próximos</div></div><button class="btn" onclick="showView('finance')">Cobros</button></div>
+        <div class="row"><div><b>2 cancelaciones</b><div class="sub">Hay huecos para lista de espera</div></div><button class="btn" onclick="showView('agenda')">Agenda</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="patients" class="view">
+  <div class="row"><div><h1>Pacientes</h1><div class="sub">Búsqueda rápida por nombre, teléfono o expediente.</div></div><button class="btn primary" onclick="openModal('newPatient')">+ Nuevo paciente</button></div>
+  <div class="card mt"><div class="search"><input id="patientSearch" placeholder="Buscar paciente…"><button class="btn">Buscar</button></div>
+  <table class="table clickable" id="patientTable"><thead><tr><th>Paciente</th><th>Expediente</th><th>Tratamiento</th><th>Profesional</th><th>Estado</th><th>Saldo</th></tr></thead><tbody>
+  <tr onclick="openPatient('Lucía Fernández')"><td><b>Lucía Fernández</b><div class="sub">11 5555-1201</div></td><td>OE-00241</td><td><span class="badge b-blue">Ortodoncia</span></td><td>Dr. García</td><td><span class="badge b-green">Activo</span></td><td>$35.000</td></tr>
+  <tr onclick="openPatient('Martín López')"><td><b>Martín López</b><div class="sub">11 5555-3342</div></td><td>OE-00240</td><td><span class="badge b-amber">Endodoncia</span></td><td>Residente</td><td><span class="badge b-green">Activo</span></td><td>$0</td></tr>
+  <tr onclick="openPatient('Sofía Ruiz')"><td><b>Sofía Ruiz</b><div class="sub">11 5555-7788</div></td><td>OE-00239</td><td><span class="badge b-blue">Ortodoncia</span></td><td>Dr. García</td><td><span class="badge b-green">Activo</span></td><td>$20.000</td></tr>
+  <tr onclick="openPatient('Pedro Silva')"><td><b>Pedro Silva</b><div class="sub">11 5555-9081</div></td><td>OE-00238</td><td><span class="badge b-green">Control</span></td><td>Residente</td><td><span class="badge b-gray">Finalizado</span></td><td>$0</td></tr>
+  </tbody></table></div>
+</div>
+
+<div id="patientDetail" class="view">
+  <div class="row"><div><button class="btn ghost" onclick="showView('patients')">← Pacientes</button><h1 id="patientName">Lucía Fernández</h1><div class="sub">OE-00241 · 11 5555-1201 · 29 años</div></div><div class="actions"><button class="btn" onclick="openModal('newPayment')">Registrar pago</button><button class="btn primary" onclick="openModal('newAppointment')">Agendar cita</button></div></div>
+  <div class="grid g3 mt">
+    <div class="card"><div class="row"><h2>Datos básicos</h2><span class="badge b-green">Activo</span></div><div class="stack"><div><div class="sub">Fecha de nacimiento</div><b>14/03/1997</b></div><div><div class="sub">Contacto de emergencia</div><b>María Fernández · 11 4444-9988</b></div><div><div class="sub">Alergias</div><b>Penicilina</b></div><div><div class="sub">Plan</div><b>Ortodoncia integral</b></div></div></div>
+    <div class="card"><h2>Cuenta</h2><div class="metric"><div><div class="sub">Presupuesto</div><div class="n">$480.000</div></div></div><div class="row mt"><span class="sub">Pagado</span><b>$445.000</b></div><div class="row"><span class="sub">Saldo</span><b style="color:#d97706">$35.000</b></div><div class="actions mt"><button class="btn" onclick="openModal('newPayment')">Registrar abono</button><button class="btn">Imprimir estado</button></div></div>
+    <div class="card"><h2>Próxima cita</h2><div style="font-size:28px;font-weight:800">24 Ago</div><div class="sub">09:00 · Ajuste mensual</div><div class="mt"><span class="badge b-blue">Ortodoncia</span> · Dr. García</div><button class="btn mt">Enviar recordatorio</button></div>
+  </div>
+  <div class="tabs mt"><button class="active" data-tab="clinicalTab">Historia clínica</button><button data-tab="orthoTab">Ortodoncia</button><button data-tab="endoTab">Endodoncia</button><button data-tab="financeTab">Cuenta</button></div>
+  <div id="clinicalTab" class="tabpane"><div class="grid g2"><div class="card"><h2>Odontograma</h2><div class="toothmap" id="toothmap"></div><div class="legend"><span><i class="dot" style="background:#dcfce7"></i>Tratado</span><span><i class="dot" style="background:#dbeafe"></i>En tratamiento</span><span><i class="dot" style="background:#fff7ed"></i>Pendiente</span></div></div><div class="card"><div class="row"><h2>Timeline clínico</h2><button class="btn" onclick="openModal('newNote')">+ Nota</button></div><div class="timeline">
+    <div class="event"><div class="date">18/08/2026 · 09:05</div><strong>Ajuste de ortodoncia</strong><p>Control de brackets, cambio de arco y registro fotográfico.</p></div>
+    <div class="event"><div class="date">21/07/2026 · 09:12</div><strong>Control mensual</strong><p>Evolución favorable. Se mantiene plan.</p></div>
+    <div class="event"><div class="date">23/06/2026 · 09:02</div><strong>Fotografías intraorales</strong><p>Comparativa antes/después archivada.</p></div>
+  </div></div></div></div>
+  <div id="orthoTab" class="tabpane" style="display:none"><div class="grid g2"><div class="card"><h2>Plan de tratamiento</h2><div class="stack"><div class="row"><b>Fase 1 · Alineación</b><span class="badge b-green">Completada</span></div><div class="row"><b>Fase 2 · Corrección</b><span class="badge b-blue">En curso</span></div><div class="row"><b>Fase 3 · Retención</b><span class="badge b-gray">Pendiente</span></div></div></div><div class="card"><h2>Duración</h2><div class="metric"><div><div class="sub">Estimada</div><div class="n">24 meses</div></div><div><div class="sub">Transcurridos</div><div class="n">15</div></div></div><div class="sub mt">Progreso aproximado: 63%</div></div></div></div>
+  <div id="endoTab" class="tabpane" style="display:none"><div class="card"><h2>Sesiones de endodoncia</h2><div class="sub">Este paciente no tiene un tratamiento de endodoncia activo.</div></div></div>
+  <div id="financeTab" class="tabpane" style="display:none"><div class="card"><h2>Movimientos</h2><table class="table"><tr><th>Fecha</th><th>Concepto</th><th>Importe</th><th>Medio</th></tr><tr><td>18/08/26</td><td>Abono mensual</td><td>$25.000</td><td>Transferencia</td></tr><tr><td>20/07/26</td><td>Abono mensual</td><td>$25.000</td><td>Tarjeta</td></tr></table></div></div>
+</div>
+
+<div id="agenda" class="view">
+  <div class="row"><div><h1>Agenda</h1><div class="sub">Semana del 17 al 23 de agosto · titulares y residente.</div></div><div class="actions"><button class="btn">‹</button><button class="btn">Hoy</button><button class="btn">›</button><button class="btn primary" onclick="openModal('newAppointment')">+ Cita</button></div></div>
+  <div class="card mt"><div class="row"><div class="tabs" style="margin:0;border:0"><button class="active">Semana</button><button>Día</button><button>Mes</button></div><div class="actions"><span class="badge b-blue">Dr. García</span><span class="badge b-green">Residente</span></div></div>
+  <div class="calendar mt">
+    <div class="dayhead">Lun 17</div><div class="dayhead">Mar 18</div><div class="dayhead">Mié 19</div><div class="dayhead">Jue 20</div><div class="dayhead">Vie 21</div><div class="dayhead">Sáb 22</div><div class="dayhead">Dom 23</div>
+    <div class="day"><div class="num">17</div><div class="appt">09:00 · Lucía<br><b>Ajuste</b></div><div class="appt green">11:30 · Sofía<br><b>Control</b></div></div>
+    <div class="day"><div class="num">18</div><div class="appt amber">10:00 · Martín<br><b>Endo · Sesión 2</b></div></div>
+    <div class="day"><div class="num">19</div><div class="appt">09:30 · Ana<br><b>Consulta inicial</b></div><div class="appt green">15:00 · Pedro<br><b>Control</b></div></div>
+    <div class="day"><div class="num">20</div><div class="appt">08:30 · Juan<br><b>Ajuste</b></div><div class="appt amber">11:00 · Carla<br><b>Endo · Sesión 1</b></div></div>
+    <div class="day"><div class="num">21</div><div class="appt">09:00 · Lucía<br><b>Fotos</b></div></div>
+    <div class="day"><div class="num">22</div><div class="sub">Sin citas</div></div>
+    <div class="day"><div class="num">23</div><div class="sub">Clínica cerrada</div></div>
+  </div></div>
+  <div class="grid g2 mt"><div class="card"><h2>Lista de espera</h2><table class="table"><tr><th>Paciente</th><th>Tratamiento</th><th>Disponibilidad</th><th></th></tr><tr><td>Valentina Cruz</td><td>Ortodoncia</td><td>Cualquier tarde</td><td><button class="btn">Contactar</button></td></tr><tr><td>Diego Pérez</td><td>Control</td><td>Viernes</td><td><button class="btn">Contactar</button></td></tr></table></div><div class="card"><h2>Recordatorios</h2><div class="stack"><div class="row"><span>24 h antes</span><b>WhatsApp</b></div><div class="row"><span>48 h antes</span><b>SMS</b></div><div class="sub">Los mensajes se envían automáticamente según la configuración.</div></div></div></div>
+</div>
+
+<div id="clinical" class="view">
+  <div class="row"><div><h1>Centro clínico</h1><div class="sub">Notas, imágenes y validaciones del residente.</div></div></div>
+  <div class="grid g2 mt"><div class="card"><div class="row"><h2>Por validar</h2><span class="badge b-amber">3 pendientes</span></div><table class="table"><tr><th>Paciente</th><th>Nota</th><th>Fecha</th><th></th></tr><tr><td><b>Martín López</b></td><td>Endodoncia · sesión 2</td><td>18/08</td><td><button class="btn primary" onclick="validateNote(this)">Validar</button></td></tr><tr><td><b>Pedro Silva</b></td><td>Control de retención</td><td>17/08</td><td><button class="btn primary" onclick="validateNote(this)">Validar</button></td></tr><tr><td><b>Ana Torres</b></td><td>Consulta inicial</td><td>16/08</td><td><button class="btn primary" onclick="validateNote(this)">Validar</button></td></tr></table></div>
+  <div class="card"><h2>Endodoncia · sesión</h2><div class="formgrid"><div class="field"><label>Pieza</label><select><option>16</option><option>21</option><option>36</option></select></div><div class="field"><label>Sesión</label><select><option>Instrumentación</option><option>Apertura</option><option>Obturación</option></select></div><div class="field"><label>Material</label><input placeholder="Ej. gutapercha"></div><div class="field"><label>Radiografía</label><input type="file"></div><div class="field full"><label>Nota clínica</label><textarea rows="4" placeholder="Describe hallazgos y procedimiento…"></textarea></div></div><div class="actions mt"><button class="btn primary">Guardar como borrador</button><button class="btn">Adjuntar archivo</button></div></div></div>
+</div>
+
+<div id="finance" class="view">
+  <div class="row"><div><h1>Finanzas</h1><div class="sub">Caja, abonos, saldos y reportes de ingresos.</div></div><button class="btn primary" onclick="openModal('newPayment')">+ Registrar pago</button></div>
+  <div class="grid g4 mt"><div class="card metric"><div><div class="sub">Ingresos hoy</div><div class="n">$184.500</div></div></div><div class="card metric"><div><div class="sub">Mes actual</div><div class="n">$3,42 M</div></div></div><div class="card metric"><div><div class="sub">Pendiente</div><div class="n">$612.000</div></div></div><div class="card metric"><div><div class="sub">Caja</div><div class="n">$245.000</div></div></div></div>
+  <div class="grid g2 mt"><div class="card"><h2>Movimientos de hoy</h2><table class="table"><tr><th>Hora</th><th>Paciente</th><th>Concepto</th><th>Importe</th></tr><tr><td>09:40</td><td>Lucía Fernández</td><td>Abono ortodoncia</td><td>$25.000</td></tr><tr><td>10:20</td><td>Martín López</td><td>Endodoncia</td><td>$85.000</td></tr><tr><td>11:50</td><td>Sofía Ruiz</td><td>Abono ortodoncia</td><td>$35.000</td></tr><tr><td>12:05</td><td>Pedro Silva</td><td>Control</td><td>$39.500</td></tr></table></div><div class="card"><h2>Pagos pendientes</h2><table class="table"><tr><th>Paciente</th><th>Vencimiento</th><th>Saldo</th></tr><tr><td>Lucía Fernández</td><td>18/08</td><td>$35.000</td></tr><tr><td>Juan Molina</td><td>15/08</td><td>$42.000</td></tr><tr><td>Carla Gómez</td><td>12/08</td><td>$60.000</td></tr></table></div></div>
+</div>
+
+<div id="reports" class="view">
+  <div class="row"><div><h1>Reportes</h1><div class="sub">Indicadores de gestión para el dentista titular.</div></div><button class="btn">Exportar</button></div>
+  <div class="grid g4 mt"><div class="card"><div class="sub">Pacientes nuevos</div><div class="n">27</div><div class="sub">este mes</div></div><div class="card"><div class="sub">Ingresos ortodoncia</div><div class="n">$2,18 M</div><div class="sub">64% del total</div></div><div class="card"><div class="sub">Tratamientos activos</div><div class="n">91</div><div class="sub">vs 38 finalizados</div></div><div class="card"><div class="sub">Cancelaciones</div><div class="n">6,4%</div><div class="sub">este mes</div></div></div>
+  <div class="grid g2 mt"><div class="card"><h2>Productividad</h2><table class="table"><tr><th>Profesional</th><th>Citas</th><th>Notas</th><th>Finalizados</th></tr><tr><td>Dr. García</td><td>96</td><td>82</td><td>11</td></tr><tr><td>Residente</td><td>61</td><td>54</td><td>7</td></tr></table></div><div class="card"><h2>Tratamientos</h2><div class="stack"><div class="row"><span>Ortodoncia</span><b>71%</b></div><div class="row"><span>Endodoncia</span><b>21%</b></div><div class="row"><span>Otros</span><b>8%</b></div></div></div></div>
+</div>
+
+<div id="settings" class="view">
+  <div><h1>Configuración</h1><div class="sub">Disponible para el dentista titular.</div></div>
+  <div class="grid g2 mt"><div class="card"><h2>Equipo y permisos</h2><table class="table"><tr><th>Usuario</th><th>Rol</th><th>Permisos</th></tr><tr><td>María · Recepción</td><td><span class="badge b-gray">Secretaria</span></td><td>Agenda · Pacientes básicos · Caja</td></tr><tr><td>Lucas · Formación</td><td><span class="badge b-green">Residente</span></td><td>Clínico asignado · Borradores</td></tr><tr><td>Dr. García</td><td><span class="badge b-blue">Titular</span></td><td>Acceso completo</td></tr></table></div><div class="card"><h2>Clínica</h2><div class="formgrid"><div class="field"><label>Nombre</label><input value="Sonrisa Norte"></div><div class="field"><label>Idioma</label><select><option>Español</option><option>English</option></select></div><div class="field"><label>Recordatorio</label><select><option>WhatsApp 24 h antes</option><option>SMS 48 h antes</option></select></div><div class="field"><label>Moneda</label><select><option>ARS — Peso argentino</option><option>USD — Dólar</option></select></div></div><button class="btn primary mt">Guardar configuración</button></div></div>
+  <div class="card mt"><h2>Privacidad y respaldo</h2><div class="row"><div><b>Backup automático</b><div class="sub">Último respaldo: hoy 03:00 · retención configurable</div></div><span class="badge b-green">Activo</span></div><div class="row mt"><div><b>Registro de auditoría</b><div class="sub">Cambios clínicos y administrativos quedan registrados.</div></div><span class="badge b-green">Activo</span></div></div>
+</div>
+
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><div class="row"><h2 id="modalTitle">Nuevo</h2><button class="btn ghost" onclick="closeModal()">✕</button></div><div id="modalBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const views=[...document.querySelectorAll('.view')];
+function showView(id){views.forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+document.getElementById('today').textContent=new Intl.DateTimeFormat('es-AR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date());
+
+const roleSelect=document.getElementById('roleSelect');
+roleSelect.addEventListener('change',()=>{
+  const r=roleSelect.value;
+  const clinical=document.querySelector('[data-view="clinical"]'), finance=document.querySelector('[data-view="finance"]'), reports=document.querySelector('[data-view="reports"]'), settings=document.querySelector('[data-view="settings"]');
+  clinical.style.display=r==='secretaria'?'none':''; finance.style.display=''; reports.style.display=r==='admin'?'':'none'; settings.style.display=r==='admin'?'':'none';
+  toast('Rol cambiado: '+({secretaria:'Secretaria',residente:'Residente',admin:'Dentista titular'})[r]);
+});
+
+function openPatient(name){document.getElementById('patientName').textContent=name;showView('patientDetail');renderTeeth()}
+function renderTeeth(){const map=document.getElementById('toothmap'); if(map.children.length)return; for(let i=11;i<=18;i++){let d=document.createElement('div');d.className='tooth '+(i%3===0?'done':i%2===0?'treat':'pending');d.textContent=i;map.appendChild(d)} for(let i=21;i<=28;i++){let d=document.createElement('div');d.className='tooth '+(i%3===0?'done':i%2===0?'treat':'pending');d.textContent=i;map.appendChild(d)} for(let i=31;i<=38;i++){let d=document.createElement('div');d.className='tooth '+(i%3===0?'done':i%2===0?'treat':'pending');d.textContent=i;map.appendChild(d)} for(let i=41;i<=48;i++){let d=document.createElement('div');d.className='tooth '+(i%3===0?'done':i%2===0?'treat':'pending');d.textContent=i;map.appendChild(d)}}
+document.querySelectorAll('.tabs button').forEach(btn=>btn.addEventListener('click',()=>{
+  const id=btn.dataset.tab;if(!id)return;
+  btn.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.tabpane').forEach(x=>x.style.display=x.id===id?'block':'none');
+}));
+
+function openModal(type){
+ const title=document.getElementById('modalTitle'),body=document.getElementById('modalBody'); let html='';
+ if(type==='newPatient'){title.textContent='Registrar paciente';html=`<div class="formgrid"><div class="field"><label>Nombre y apellido</label><input placeholder="Ej. Laura Gómez"></div><div class="field"><label>Teléfono</label><input placeholder="11 5555-0000"></div><div class="field"><label>Fecha de nacimiento</label><input type="date"></div><div class="field"><label>Tratamiento</label><select><option>Ortodoncia</option><option>Endodoncia</option></select></div><div class="field full"><label>Alergias / alertas</label><input placeholder="Ej. Penicilina"></div><div class="field full"><label>Contacto de emergencia</label><input placeholder="Nombre y teléfono"></div></div><div class="actions mt"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveAction('Paciente registrado')">Guardar paciente</button></div>`}
+ if(type==='newAppointment'){title.textContent='Agendar cita';html=`<div class="formgrid"><div class="field"><label>Paciente</label><input placeholder="Buscar paciente…"></div><div class="field"><label>Profesional</label><select><option>Dr. García</option><option>Residente</option></select></div><div class="field"><label>Fecha</label><input type="date"></div><div class="field"><label>Hora</label><input type="time" value="10:00"></div><div class="field"><label>Tipo</label><select><option>Ajuste ortodoncia · 45 min</option><option>Endodoncia · 60 min</option><option>Consulta inicial · 30 min</option><option>Control · 20 min</option></select></div><div class="field"><label>Recordatorio</label><select><option>WhatsApp 24 h antes</option><option>SMS 48 h antes</option></select></div></div><div class="actions mt"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveAction('Cita agendada y recordatorio programado')">Agendar</button></div>`}
+ if(type==='newPayment'){title.textContent='Registrar pago';html=`<div class="formgrid"><div class="field"><label>Paciente</label><input value="Lucía Fernández"></div><div class="field"><label>Importe</label><input value="25000"></div><div class="field"><label>Concepto</label><select><option>Abono ortodoncia</option><option>Endodoncia</option><option>Consulta</option></select></div><div class="field"><label>Medio</label><select><option>Transferencia</option><option>Tarjeta</option><option>Efectivo</option></select></div><div class="field full"><label>Observación</label><textarea rows="3" placeholder="Opcional"></textarea></div></div><div class="actions mt"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveAction('Pago registrado · comprobante listo para imprimir')">Registrar pago</button></div>`}
+ if(type==='newNote'){title.textContent='Nueva nota clínica';html=`<div class="field"><label>Nota</label><textarea rows="7" placeholder="Hallazgos, procedimiento, indicaciones…"></textarea></div><div class="field mt"><label>Adjuntos</label><input type="file" multiple></div><div class="actions mt"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" onclick="saveAction('Nota guardada como borrador para validación')">Guardar borrador</button></div>`}
+ body.innerHTML=html;document.getElementById('modal').classList.add('show')
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function saveAction(msg){closeModal();toast(msg)}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+function validateNote(btn){btn.textContent='Validada ✓';btn.className='btn';btn.disabled=true;toast('Nota validada y firmada por el titular')}
+document.getElementById('patientSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#patientTable tbody tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none')});
+</script>
+</body>
+</html>
